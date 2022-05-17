@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
     isVegan:{type:Boolean,default:false},
     isGlutenFree:{type:Boolean,default:false},
     position:{type:Number},
+    cloudinary_id:{type:String}
 },{timestamps:true});
 
 
