@@ -1,5 +1,6 @@
 const Category = require('../models/category.model');
-
+const cloudinary = require('../utils/cloudinary');
+const upload = require('../utils/multer');
 const router = require('express').Router();
 
 
@@ -26,9 +27,16 @@ router.get('/:id',async(req,res)=>{
 
 
 // post new category
-router.post('/',async(req,res)=>{
+router.post('/',upload.single('image'),async(req,res)=>{
     try {
         let category = new Category(req.body);
+        if(req.file){
+            const result = await cloudinary.v2.uploader.upload(req.file.path,{upload_preset: "cupcake_factory"});
+            category.image = result.secure_url;
+            category.cloudinary_id = result.public_id;
+        }else{
+            category.image = 'noImage.png';
+        }
         await category.save();
         return res.status(200).json({message:'New Category added'});
     } catch (error) {
