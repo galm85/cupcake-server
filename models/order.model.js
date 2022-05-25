@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     userId:{type:mongoose.Types.ObjectId},
-    order:{type:String,required:true},
-    status:{type:String},
+    items:{type:String,required:true},
+    isActive:{type:Boolean,default:true},
     totalAmount:{type:Number},
 },{timestamps:true});
 
 
-const User = mongoose.model('User',userSchema);
+const Order = mongoose.model('Order',orderSchema);
 
-module.exports = User;
+module.exports = Order;

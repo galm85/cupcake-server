@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 4001;
 const categoriesRoutes = require('./routes/category.routes');
 const usersRoutes = require('./routes/user.routes');
 const productsRoutes = require('./routes/product.routes');
+const ordersRoutes = require('./routes/order.routes');
 
 mongoose.connect(process.env.MONGO_URI)
     .then(console.log('Connect to mongoose'))
@@ -23,6 +24,8 @@ app.use(cors());
 app.use('/categories',categoriesRoutes);
 app.use('/users',usersRoutes);
 app.use('/products',productsRoutes);
+app.use('/orders',ordersRoutes);
+
 
 app.get('/',(req,res)=>{
     res.send('CupCake factory');
