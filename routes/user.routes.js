@@ -29,8 +29,9 @@ router.get('/:id',async(req,res)=>{
 
 // Register new User
 router.post('/register',upload.single('image'),async(req,res)=>{
+  
     try {
-        const user = await User.findOne({email:req.body.email});
+        let user = await User.findOne({email:req.body.email});
         if(user){
             return res.status(400).json({message:'Email is Already taken'});
         }
@@ -45,11 +46,12 @@ router.post('/register',upload.single('image'),async(req,res)=>{
 
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password,salt);
-        
+               
         await user.save();
         return res.status(200).json({message:'User register successfully'});
     } catch (error) {
-        return res.status(400).json({message:'Something went wrong',error});
+         return res.status(400).json({message:'Something went wrong',error});
+       
     }
 })
 

@@ -56,5 +56,35 @@ router.delete('/:id',async(req,res)=>{
 
 
 
+// edit category
+router.patch('/edit-category/:categoryId',upload.single('image'),async(req,res)=>{
+
+    try {
+        const categoryId = req.params.categoryId;
+        const category = await Category.findById(categoryId);
+        let body = (req.body);
+        
+        
+
+        if(req.file){
+            const result = await cloudinary.v2.uploader.upload(req.file.path,{upload_preset: "cupcake_factory"});
+            body.image = result.secure_url;
+            body.cloudinary_id = result.public_id;
+            await cloudinary.v2.uploader.destroy(category.cloudinary_id);
+            await Category.findByIdAndUpdate(categoryId,body);
+            return res.json({message:'Category Updated with new image'});
+
+        }else{
+            await Category.findByIdAndUpdate(categoryId,body);
+            return res.json({message:'Category Updated with old image'});
+
+        }
+    } catch (error) {
+        return res.status(400).json({message:'Somthing went wrong',error});
+    }
+})
+
+
+
 
 module.exports = router;

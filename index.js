@@ -10,7 +10,7 @@ const categoriesRoutes = require('./routes/category.routes');
 const usersRoutes = require('./routes/user.routes');
 const productsRoutes = require('./routes/product.routes');
 
-mongoose.connect('mongodb+srv://gal:1234@myrestapi.creen.mongodb.net/cupcake-factory?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGO_URI)
     .then(console.log('Connect to mongoose'))
     .then(()=>app.listen(PORT,()=>console.log(`Server is running on: http://localhost:${PORT}`)))
     .catch(err=>console.log(err));
