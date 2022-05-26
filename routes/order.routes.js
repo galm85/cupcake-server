@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { findById } = require('../models/order.model');
+const { findById, update } = require('../models/order.model');
 const Order = require('../models/order.model');
 const { getTotalPrice } = require('../utils/functions');
 
@@ -58,6 +58,39 @@ router.patch('/current-order/:userId',async(req,res)=>{
          return res.status(400).json({message:'Something went wrong',error});
        
     }
+})
+
+
+
+// place order
+router.patch('/place-order/:userId',async(req,res)=>{
+
+    try{
+
+        const order = await Order.findOne({userId:req.params.userId,isActive:true});
+        if(!order){
+            return res.status(400).json({message:'No Order Found'});
+        }
+        
+        let updateOrder = {}
+        updateOrder.items = order.items;
+        updateOrder.isActive = false;
+        updateOrder.totalAmount = req.body.totalAmount;
+        updateOrder.contactPerson = req.body.contactPerson;
+        updateOrder.address = req.body.address;
+        updateOrder.city = req.body.city;
+        updateOrder.phone = req.body.phone;
+        updateOrder.paymentMethod = req.body.paymentMethod;
+        updateOrder.creditCard = req.body.creditCard;
+        
+        await Order.findByIdAndUpdate(order._id,updateOrder);
+        return res.status(200).json({message:'thenk you for your order'});
+    }catch(err){
+        console.error(err);
+        return res.status(400).json({message:'something went wrong'});
+    }
+    
+    
 })
 
 

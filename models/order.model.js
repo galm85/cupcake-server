@@ -6,6 +6,13 @@ const orderSchema = new mongoose.Schema({
     items:{type:String,required:true},
     isActive:{type:Boolean,default:true},
     totalAmount:{type:Number},
+    contactPerson:String,
+    address:String,
+    city:String,
+    phone:String,
+    paymentMethod:String,
+    creditCard:String,
+    
 },{timestamps:true});
 
 
