@@ -3,9 +3,9 @@ const { findById, update } = require('../models/order.model');
 const Order = require('../models/order.model');
 const { getTotalPrice } = require('../utils/functions');
 
-//get all orders order by status;
-router.get('/',async(req,res)=>{
-    const orders = await Order.find({}).sort({'isActive':1});
+//get all orders ;
+router.get('/all-orders',async(req,res)=>{
+    const orders = await Order.find({isActive:false}).sort({'status':-1});
     return res.status(200).json(orders);
 })
 
@@ -91,6 +91,22 @@ router.patch('/place-order/:userId',async(req,res)=>{
     }
     
     
+})
+
+
+
+
+// change order status
+router.patch('/update-status/:orderId',async(req,res)=>{
+
+  
+    try {
+        const order = await Order.findByIdAndUpdate(req.params.orderId,{$set:{status:'Deliverd'}});
+        return res.status(200).json({message:'Order Deliverd'});
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'something went wrong'});
+    }
 })
 
 

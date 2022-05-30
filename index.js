@@ -10,6 +10,9 @@ const categoriesRoutes = require('./routes/category.routes');
 const usersRoutes = require('./routes/user.routes');
 const productsRoutes = require('./routes/product.routes');
 const ordersRoutes = require('./routes/order.routes');
+const restaurantsRoutes = require('./routes/restaurant.routes');
+const jobsRoutes = require('./routes/job.routes');
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(console.log('Connect to mongoose'))
@@ -25,6 +28,8 @@ app.use('/categories',categoriesRoutes);
 app.use('/users',usersRoutes);
 app.use('/products',productsRoutes);
 app.use('/orders',ordersRoutes);
+app.use('/restaurants',restaurantsRoutes);
+app.use('/jobs',jobsRoutes);
 
 
 app.get('/',(req,res)=>{
