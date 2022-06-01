@@ -12,6 +12,7 @@ const productsRoutes = require('./routes/product.routes');
 const ordersRoutes = require('./routes/order.routes');
 const restaurantsRoutes = require('./routes/restaurant.routes');
 const jobsRoutes = require('./routes/job.routes');
+const applicationsRoutes = require('./routes/application.routes');
 
 
 mongoose.connect(process.env.MONGO_URI)
@@ -30,6 +31,7 @@ app.use('/products',productsRoutes);
 app.use('/orders',ordersRoutes);
 app.use('/restaurants',restaurantsRoutes);
 app.use('/jobs',jobsRoutes);
+app.use('/applications',applicationsRoutes);
 
 
 app.get('/',(req,res)=>{

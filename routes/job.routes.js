@@ -29,27 +29,19 @@ router.post('/',async(req,res)=>{
 })
 
 
-// edit Product
-router.patch('/edit-job/:jobId',async(req,res)=>{
-    try {
-        await Job.findByIdAndUpdate(req.params.jobId,req.body);
-        return res.status(200).json({message:'Job Updated'})
-    } catch (error) {
-        console.log(error);
-        return res.status(400).json({message:'Something Went wrong'})
-        
-    }
-})
 
-// edit Product
-router.delete('/delete-job/:jobId',async(req,res)=>{
+//get job by id
+router.get('/job-by-id/:id',async(req,res)=>{
+    
     try {
-        await Job.findByIdAndDelete(req.params.jobId);
-        return res.status(200).json({message:'Job Deleted'})
+        const job = await Job.findById(req.params.id);
+        if(!job){
+            return res.status(400).json({message:'The job is not abvilable anymore'});
+        }
+        return res.status(200).json(job);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({message:'Something Went wrong'})
-        
+        return res.status(400).json({message:'Something went wrong'});
     }
 })
 
