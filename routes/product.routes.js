@@ -66,7 +66,7 @@ router.post('/',upload.single('image'),async(req,res)=>{
 
 // delete product
 router.delete('/:id',async(req,res)=>{
-    console.log('delete');
+ 
     try {
         const product = await Product.findByIdAndRemove(req.params.id);
         if(product.cloudinary_id){
@@ -82,6 +82,7 @@ router.delete('/:id',async(req,res)=>{
 
 //get products by categoty id
 router.get('/get-products-by-category/:categoryId',async (req,res)=>{
+   
     try {
             const products = await Product.find({category:req.params.categoryId});
             return res.status(200).json(products);
@@ -119,6 +120,20 @@ router.patch('/edit-product/:productId',upload.single('image'),async(req,res)=>{
     }
 })
 
+
+
+
+// get cupcakes
+router.get('/get-products/get-cupcakes',async(req,res)=>{
+    
+    try {
+        const cupcakes = await Product.find({category:'628b48fbd6648be276e7ce8d'});
+        return res.status(200).json(cupcakes);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'something went wrong'})
+    }
+})
 
 
 

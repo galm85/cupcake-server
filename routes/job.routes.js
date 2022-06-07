@@ -29,6 +29,17 @@ router.post('/',async(req,res)=>{
 })
 
 
+router.patch('/edit-job/:jobId',async(req,res)=>{
+    console.log('edit');
+    try {
+        await Job.findByIdAndUpdate(req.params.jobId,req.body);
+        return res.status(200).json({message:'Job Updated'});
+    } catch (error) {
+        return res.status(400).json({message:"somethin went wrong" , error});
+    }
+})
+
+
 
 //get job by id
 router.get('/job-by-id/:id',async(req,res)=>{
@@ -42,6 +53,17 @@ router.get('/job-by-id/:id',async(req,res)=>{
     } catch (error) {
         console.log(error);
         return res.status(400).json({message:'Something went wrong'});
+    }
+})
+
+
+router.delete('/delete-job/:jobId',async(req,res)=>{
+    try {
+        await Job.findByIdAndDelete(req.params.jobId);
+        return res.status(200).json({message:'Job removed'});
+    } catch (error) {
+        return res.status(400).json({message:'Something went wrong',error});
+        
     }
 })
 

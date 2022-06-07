@@ -21,6 +21,7 @@ module.exports.cvFile = multer({
     storage:multer.diskStorage({}),
     fileFilter:(req,file,cb)=>{
         let ext = path.extname(file.originalname);
+       
         // if(ext !== ".doc" && ext !== ".docx" && ext !== ".png"){
         //     cb(new Error("CV File type wrong"),false);
         //     return;
