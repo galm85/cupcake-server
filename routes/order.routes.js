@@ -61,6 +61,78 @@ router.patch('/current-order/:userId',async(req,res)=>{
 })
 
 
+// update amount of item in current order
+router.patch('/update-amount-current-order/:userId/:itemId/:op',async(req,res)=>{
+    
+    let op = req.params.op;
+    itemId = req.params.itemId;
+    userId = req.params.userId;
+    
+
+    try {
+        let order = await Order.findOne({userId:req.params.userId,isActive:true});
+        if(order){
+            let items = JSON.parse(order.items);
+            let updateItems = items.map((item)=>{
+                if(item._id == itemId){
+                    if(op == "+"){
+                        
+                        item.amount = item.amount +1;
+                        return item;
+                    }else if(op == '-' && item.amount > 1){
+                        item.amount --;
+                        return item;
+                    }else{
+                        return item;
+                    }
+                }else{
+                    return item;
+                }
+
+            
+            })
+          
+
+            let total = getTotalPrice(items);
+            updateItems = JSON.stringify(updateItems);
+            
+
+            await Order.findByIdAndUpdate(order._id,{$set:{items:updateItems,totalAmount:total}});
+            return res.status(200).json({message:'ipdate amount success',items,total});
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json(error);
+    }
+})
+
+
+
+//remove item from current order
+router.patch('/remove-item-from-order/:userId/:itemId/',async(req,res)=>{
+    
+    itemId = req.params.itemId;
+    userId = req.params.userId;
+    
+
+    try {
+        let order = await Order.findOne({userId:req.params.userId,isActive:true});
+        if(order){
+            let items = JSON.parse(order.items);
+            let updateItems = items.filter(item=>item._id !== itemId);
+            let total = getTotalPrice(updateItems);
+            updateItems = JSON.stringify(updateItems);
+
+            await Order.findByIdAndUpdate(order._id,{$set:{items:updateItems,totalAmount:total}});
+            return res.status(200).json({message:'item Removed',items,total});
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json(error);
+    }
+})
+
+
 
 // place order
 router.patch('/place-order/:userId',async(req,res)=>{
@@ -106,6 +178,21 @@ router.patch('/update-status/:orderId',async(req,res)=>{
     } catch (error) {
         console.log(error);
         return res.status(400).json({message:'something went wrong'});
+    }
+})
+
+
+
+
+
+router.get('/get-order-by-user/:userId',async(req,res)=>{
+    
+    try {
+        const orders = await Order.find({userId:req.params.userId,isActive:false});
+        return res.status(200).json(orders);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'Something went wrong'})
     }
 })
 
