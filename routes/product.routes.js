@@ -137,6 +137,64 @@ router.get('/get-products/get-cupcakes',async(req,res)=>{
 
 
 
+//search product
+router.get('/search/:value',async(req,res)=>{
+    try {
+        const value = req.params.value.toLowerCase();
+        // const products = await Product.find(
+        //         {title:{$regex:value,$options:"i"}} ,
+        //     );
+
+        const products = await Product.aggregate([
+            {
+                $match:{title:{$regex:value,$options:"i"}}
+            },
+            {
+                $lookup:{
+                    from:'categories',
+                    localField:'category',
+                    foreignField:'_id',
+                    as:'category_title'
+                }
+            }
+        ])
+        return res.status(200).json(products);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json(error);
+    }
+})
+
+
+// auto complete products
+router.get('/auto-complete/:value',async(req,res)=>{
+
+    try {
+        const value = req.params.value.toLowerCase();
+        // const products = await Product.find({title:{$regex:value,$options:"i"}}).select('title');
+        const products = await Product.aggregate([
+            {
+                $match:{title:{$regex:value,$options:"i"}}
+            },
+            {
+                $lookup:{
+                    from:'categories',
+                    localField:'category',
+                    foreignField:'_id',
+                    as:'category_title'
+                }
+            }
+        ])
+
+        res.status(200).json(products);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+})
+
+
+
 
 
 
