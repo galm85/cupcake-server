@@ -3,26 +3,53 @@ const Product = require('../models/product.model');
 const cloudinary = require('../utils/cloudinary');
 const upload = require('../utils/multer');
 const router = require('express').Router();
+var ObjectId = require('mongoose').Types.ObjectId; 
 
 
 // get all products
 router.get('/',async(req,res)=>{
 
+    const categoryId = (req.query.categoryId);
     const page = Number(req.query.page);
     const itemsPerPage = Number(req.query.itemsPerPage);
-    const total = await Product.count();
+    let total = 0;
+    let products = [];
     
-    
-    const products = await Product.aggregate([
-        {
-            $lookup:{
-                from:'categories',
-                localField:'category',
-                foreignField:'_id',
-                as:'category_title'
+    if(categoryId == 'all'){
+        
+       total = await Product.count();
+       products = await Product.aggregate([
+            {
+                $lookup:{
+                    from:'categories',
+                    localField:'category',
+                    foreignField:'_id',
+                    as:'category_title'
+                }
             }
-        }
-    ]).sort({'position':1}).skip(page*itemsPerPage - itemsPerPage).limit(itemsPerPage);
+            ]).sort({'position':1}).skip(page*itemsPerPage - itemsPerPage).limit(itemsPerPage);
+    
+    }else{
+        
+        total = await Product.count({category:categoryId});
+        products = await Product.aggregate([
+            {
+                $match:{category:new ObjectId(categoryId)}
+            },
+            {
+                $lookup:{
+                    from:'categories',
+                    localField:'category',
+                    foreignField:'_id',
+                    as:'category_title'
+                }
+            }
+            ]).sort({'position':1}).skip(page*itemsPerPage - itemsPerPage).limit(itemsPerPage);
+    }
+    
+    
+    
+    
     return res.status(200).json({products,total});
 })
 
@@ -82,9 +109,21 @@ router.delete('/:id',async(req,res)=>{
 
 //get products by categoty id
 router.get('/get-products-by-category/:categoryId',async (req,res)=>{
-   
     try {
-            const products = await Product.find({category:req.params.categoryId});
+            // const products = await Product.find({category:req.params.categoryId});
+            const products = await Product.aggregate([
+                {
+                    $match:{category:new ObjectId(req.params.categoryId)}
+                },
+                {
+                    $lookup:{
+                        from:'categories',
+                        localField:'category',
+                        foreignField:'_id',
+                        as:'category_title'
+                    }
+                }
+            ])
             return res.status(200).json(products);
     } catch (error) {
         return res.status(400).json({message:"Something went wrong, please try again"});
